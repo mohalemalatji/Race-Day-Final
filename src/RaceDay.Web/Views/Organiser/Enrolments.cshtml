@@ -1,0 +1,49 @@
+@model EnrolmentsPage
+@{
+    ViewData["Title"] = "Event enrolments";
+}
+<p><a asp-action="Index">&larr; My events</a></p>
+<h1>Enrolments</h1>
+<p class="text-secondary mb-4">@Model.EventName</p>
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+else if (Model.Enrolments.Count == 0)
+{
+    <div class="simple-card">There are no enrolments for this event yet.</div>
+}
+else
+{
+    <div class="table-responsive simple-card">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>Participant</th><th>Category</th><th>Status</th><th>Result</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var row in Model.Enrolments)
+            {
+                <tr>
+                    <td>@row.ParticipantName</td>
+                    <td>@row.CategoryName</td>
+                    <td><span class="badge status-badge status-@row.Status.ToLowerInvariant()">@row.Status</span></td>
+                    <td>
+                        @if (row.FinishTime is not null || row.Position is not null)
+                        {
+                            <span>@row.FinishTime?.ToString(@"hh\:mm\:ss") · Position @row.Position</span>
+                        }
+                        else
+                        {
+                            <span class="text-secondary">Not recorded</span>
+                        }
+                    </td>
+                    <td>
+                        @if (row.ResultStatus is null)
+                        {
+                            <a class="btn btn-sm btn-outline-success" asp-action="RecordResult" asp-route-id="@row.EventID" asp-route-enrolmentId="@row.EnrolmentID">Record result</a>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

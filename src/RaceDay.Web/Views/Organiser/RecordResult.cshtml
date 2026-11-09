@@ -1,0 +1,28 @@
+@model ResultPage
+@{
+    ViewData["Title"] = "Record result";
+}
+<div class="form-card">
+    <p><a asp-action="Enrolments" asp-route-id="@Model.EventID">&larr; Enrolments</a></p>
+    <h1>Record result</h1>
+    <p class="text-secondary">@Model.ParticipantName · @Model.EventName · @Model.CategoryName</p>
+    @if (ViewData["ApiError"] is string error)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+    <form asp-action="RecordResult" asp-route-id="@Model.EventID" asp-route-enrolmentId="@Model.EnrolmentID" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="mb-3">
+            <label class="form-label" for="FinishTime">Finish time</label>
+            <input class="form-control" id="FinishTime" name="FinishTime" type="time" step="1" value="@Model.FinishTime?.ToString(@"hh\:mm\:ss")" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Position" class="form-label">Finishing position</label>
+            <input asp-for="Position" class="form-control" type="number" min="1" />
+            <span asp-validation-for="Position" class="text-danger"></span>
+        </div>
+        <input asp-for="ResultStatus" type="hidden" />
+        <input asp-for="EventID" type="hidden" />
+        <button class="btn btn-success" type="submit">Save result</button>
+    </form>
+</div>

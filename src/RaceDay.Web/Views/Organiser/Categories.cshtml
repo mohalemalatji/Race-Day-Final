@@ -1,0 +1,79 @@
+@model CategoryPage
+@{
+    ViewData["Title"] = "Manage categories";
+}
+<p><a asp-action="Index">&larr; My events</a></p>
+<h1 class="mb-1">Categories</h1>
+<p class="text-secondary mb-4">@Model.Event.EventName</p>
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+<div class="row g-3">
+    <div class="col-lg-6">
+        <section class="form-card h-100">
+            <h2 class="h4">Add an existing category</h2>
+            @if (Model.Categories.Count == 0)
+            {
+                <p class="text-secondary">There are no categories yet. Create one first.</p>
+            }
+            else
+            {
+                <form asp-action="LinkCategory" asp-route-id="@Model.Event.EventID" method="post">
+                    <div class="mb-3">
+                        <label class="form-label" for="CategoryID">Category</label>
+                        <select class="form-select" id="CategoryID" name="CategoryID">
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.CategoryID">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label" for="EntryFee">Entry fee</label>
+                            <input class="form-control" id="EntryFee" name="EntryFee" type="number" min="0" step="0.01" required />
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label" for="MaxParticipants">Capacity</label>
+                            <input class="form-control" id="MaxParticipants" name="MaxParticipants" type="number" min="1" required />
+                        </div>
+                    </div>
+                    <button class="btn btn-success" type="submit">Add to event</button>
+                </form>
+            }
+        </section>
+    </div>
+    <div class="col-lg-6">
+        <section class="form-card h-100">
+            <h2 class="h4">Create a category</h2>
+            <form asp-action="CreateCategory" asp-route-id="@Model.Event.EventID" method="post">
+                <div class="mb-3">
+                    <label class="form-label" for="CategoryName">Category name</label>
+                    <input class="form-control" id="CategoryName" name="CategoryName" required maxlength="100" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="Description">Description</label>
+                    <textarea class="form-control" id="Description" name="Description" rows="2"></textarea>
+                </div>
+                <button class="btn btn-outline-success" type="submit">Create category</button>
+            </form>
+        </section>
+    </div>
+</div>
+<section class="simple-card mt-4">
+    <h2 class="h4">Categories for this event</h2>
+    @if (Model.Event.Categories.Count == 0)
+    {
+        <p class="text-secondary mb-0">No categories are linked yet.</p>
+    }
+    else
+    {
+        <ul class="mb-0">
+        @foreach (var category in Model.Event.Categories)
+        {
+            <li>@category.CategoryName — @category.Enrolled / @category.MaxParticipants entries</li>
+        }
+        </ul>
+    }
+</section>

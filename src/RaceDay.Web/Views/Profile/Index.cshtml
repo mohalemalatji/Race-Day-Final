@@ -1,0 +1,39 @@
+@model ProfilePage
+@{
+    ViewData["Title"] = "My profile";
+}
+<div class="form-card">
+    <p class="eyebrow mb-1">@Model.Role</p>
+    <h1>My profile</h1>
+    @if (ViewData["ApiError"] is string error)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.Email))
+    {
+        <p class="text-secondary">@Model.Email</p>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.ProfilePictureUrl))
+    {
+        <img class="profile-picture mb-3" src="@Model.ProfilePictureUrl" alt="Profile picture for @Model.FirstName @Model.LastName" />
+    }
+    <form asp-action="Index" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="mb-3">
+            <label asp-for="FirstName" class="form-label">First name</label>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="LastName" class="form-label">Last name</label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ProfilePicture" class="form-label">Profile picture</label>
+            <input asp-for="ProfilePicture" type="file" accept="image/jpeg,image/png,image/webp" class="form-control" />
+            <div class="form-text">JPEG, PNG, or WebP, up to 5 MB.</div>
+        </div>
+        <button class="btn btn-success" type="submit">Save changes</button>
+    </form>
+</div>

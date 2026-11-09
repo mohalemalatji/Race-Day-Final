@@ -1,0 +1,67 @@
+@model EventFormPage
+@{
+    var editing = !string.IsNullOrWhiteSpace(Model.EventID);
+    ViewData["Title"] = editing ? "Edit event" : "Create event";
+}
+<div class="form-card">
+    <p><a asp-action="Index">&larr; My events</a></p>
+    <h1>@ViewData["Title"]</h1>
+    @if (ViewData["ApiError"] is string error)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.BannerImageUrl))
+    {
+        <img class="event-banner-preview mb-3" src="@Model.BannerImageUrl" alt="Banner for @Model.EventName" />
+    }
+    <form asp-action="@(editing ? "EditEvent" : "CreateEvent")" asp-route-id="@Model.EventID" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="mb-3">
+            <label asp-for="EventName" class="form-label">Event name</label>
+            <input asp-for="EventName" class="form-control" />
+            <span asp-validation-for="EventName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="EventDate" class="form-label">Date</label>
+                <input asp-for="EventDate" type="date" class="form-control" />
+                <span asp-validation-for="EventDate" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Location" class="form-label">Location</label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label asp-for="BannerImage" class="form-label">Event banner image</label>
+            <input asp-for="BannerImage" type="file" accept="image/jpeg,image/png,image/webp" class="form-control" />
+            <div class="form-text">JPEG, PNG, or WebP, up to 5 MB. <a href="https://unsplash.com/s/photos/running-race" target="_blank" rel="noopener">Find a race photo online</a>, save it, then choose it here.</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="DistanceKm" class="form-label">Distance (km)</label>
+                <input asp-for="DistanceKm" class="form-control" type="number" min="0.01" step="0.01" />
+                <span asp-validation-for="DistanceKm" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="EventType" class="form-label">Event type</label>
+                <select asp-for="EventType" class="form-select">
+                    <option value="Run">Run</option>
+                    <option value="Walk">Walk</option>
+                    <option value="Cycle">Cycle</option>
+                </select>
+            </div>
+        </div>
+        @if (editing)
+        {
+            <input asp-for="Status" type="hidden" />
+        }
+        <button class="btn btn-success" type="submit">@(editing ? "Save changes" : "Create event")</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">Cancel</a>
+    </form>
+</div>

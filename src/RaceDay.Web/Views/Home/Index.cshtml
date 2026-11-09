@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Welcome";
+}
+<section class="hero-panel">
+    <div>
+        <p class="eyebrow">RaceDay</p>
+        <h1>Find your next finish line.</h1>
+        <p class="lead">Browse local running, walking, and cycling events. Organisers can manage events and participants from one place.</p>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a class="btn btn-success btn-lg" asp-controller="Events" asp-action="Index">View events</a>
+        }
+        else
+        {
+            <a class="btn btn-success btn-lg" asp-controller="Account" asp-action="Register">Get started</a>
+            <a class="btn btn-outline-secondary btn-lg ms-2" asp-controller="Account" asp-action="Login">Sign in</a>
+        }
+    </div>
+</section>

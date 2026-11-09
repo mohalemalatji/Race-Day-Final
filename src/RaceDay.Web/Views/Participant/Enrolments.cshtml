@@ -1,0 +1,38 @@
+@model EnrolmentsPage
+@{
+    ViewData["Title"] = "My enrolments";
+}
+<p class="eyebrow mb-1">Participant</p>
+<h1 class="mb-4">My enrolments</h1>
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+else if (Model.Enrolments.Count == 0)
+{
+    <div class="simple-card empty-state">
+        <h2>No enrolments yet</h2>
+        <p>Browse upcoming events when you're ready to enter.</p>
+        <a class="btn btn-success" asp-controller="Events" asp-action="Index">Browse events</a>
+    </div>
+}
+else
+{
+    <div class="table-responsive simple-card">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>Event</th><th>Category</th><th>Enrolled</th><th>Status</th><th>Result</th></tr></thead>
+            <tbody>
+            @foreach (var row in Model.Enrolments)
+            {
+                <tr>
+                    <td><a asp-controller="Events" asp-action="Details" asp-route-id="@row.EventID">@row.EventName</a></td>
+                    <td>@row.CategoryName</td>
+                    <td>@row.EnrolmentDateUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
+                    <td><span class="badge status-badge status-@row.Status.ToLowerInvariant()">@row.Status</span></td>
+                    <td>@(row.ResultStatus ?? "Not recorded")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

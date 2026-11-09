@@ -1,0 +1,37 @@
+@model EnrolmentsPage
+@{
+    ViewData["Title"] = "My results";
+}
+<p class="eyebrow mb-1">Participant</p>
+<h1 class="mb-4">My results</h1>
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+else if (Model.Enrolments.Count == 0)
+{
+    <div class="simple-card empty-state">
+        <h2>No results recorded yet</h2>
+        <p>Your completed event results will appear here.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive simple-card">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>Event</th><th>Category</th><th>Finish time</th><th>Position</th><th>Status</th></tr></thead>
+            <tbody>
+            @foreach (var row in Model.Enrolments)
+            {
+                <tr>
+                    <td>@row.EventName</td>
+                    <td>@row.CategoryName</td>
+                    <td>@(row.FinishTime?.ToString(@"hh\:mm\:ss") ?? "—")</td>
+                    <td>@(row.Position?.ToString() ?? "—")</td>
+                    <td><span class="badge status-badge status-@((row.ResultStatus ?? row.Status).ToLowerInvariant())">@(row.ResultStatus ?? row.Status)</span></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

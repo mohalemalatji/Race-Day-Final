@@ -1,0 +1,60 @@
+@model OrganiserHomePage
+@{
+    ViewData["Title"] = "Organiser dashboard";
+}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+        <p class="eyebrow mb-1">Organiser</p>
+        <h1 class="mb-0">My events</h1>
+    </div>
+    <a class="btn btn-success" asp-action="CreateEvent">Create event</a>
+</div>
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
+else
+{
+    <div class="summary-card mb-4">
+        <span class="text-secondary">My events</span>
+        <strong>@Model.Events.Count</strong>
+        <span class="text-secondary">Current enrolments</span>
+        <strong>@Model.TotalEnrolments</strong>
+    </div>
+    @if (Model.Events.Count == 0)
+    {
+        <div class="simple-card empty-state">
+            <h2>No upcoming events yet</h2>
+            <p>Create an event to start setting up categories and enrolments.</p>
+            <a class="btn btn-success" asp-action="CreateEvent">Create event</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive simple-card">
+            <table class="table align-middle mb-0">
+                <thead><tr><th>Event</th><th>Date</th><th>Enrolments</th><th>Actions</th></tr></thead>
+                <tbody>
+                @foreach (var item in Model.Events.OrderBy(e => e.EventDate))
+                {
+                    <tr>
+                        <td><strong>@item.EventName</strong><br /><span class="text-secondary small">@item.Location · @item.DistanceKm km</span></td>
+                        <td>@item.EventDate.ToString("dd MMM yyyy")</td>
+                        <td>@item.Categories.Sum(c => c.Enrolled)</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="EditEvent" asp-route-id="@item.EventID">Edit</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Categories" asp-route-id="@item.EventID">Categories</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Enrolments" asp-route-id="@item.EventID">Enrolments</a>
+                                <form asp-action="DeleteEvent" asp-route-id="@item.EventID" method="post" onsubmit="return confirm('Delete this event?');">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+}
