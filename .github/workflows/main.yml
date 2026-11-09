@@ -1,0 +1,27 @@
+name: RaceDay Build and Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore solution
+        run: dotnet restore RaceDay.sln --configfile NuGet.Config
+
+      - name: Build solution
+        run: dotnet build RaceDay.sln --configuration Release --no-restore
+
+      - name: Test API
+        run: dotnet test tests/RaceDay.Api.Tests/RaceDay.Api.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=results.trx"
